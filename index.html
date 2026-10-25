@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="OlsTech Solutions develops VectorForge — pictures in, cut paths out, for laser cutters, CNC routers, and cutting machines." />
+    <link rel="icon" href="data:," />
+    <title>OlsTech Solutions — VectorForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f6f4ef;
+        --paper-raised: #fffdf8;
+        --ink: #16283c;
+        --ink-soft: #43536a;
+        --ink-faint: #71809a;
+        --line: #ddd6c8;
+        --line-strong: #c9c0ac;
+        --navy: #10365e;
+        --navy-deep: #0b2543;
+        --accent: #c8352b;
+        --accent-ink: #a92a22;
+        --chip-bg: #ece7da;
+        --shadow: 0 18px 40px -18px rgba(16, 42, 74, 0.35);
+        --radius: 10px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+          --paper: #0b1420;
+          --paper-raised: #111d2e;
+          --ink: #e8edf4;
+          --ink-soft: #a9b7c9;
+          --ink-faint: #7286a0;
+          --line: #22314a;
+          --line-strong: #31435f;
+          --navy: #7fb0e8;
+          --navy-deep: #a9c9f2;
+          --accent: #f0665c;
+          --accent-ink: #f2887f;
+          --chip-bg: #182539;
+          --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 17px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      img { max-width: 100%; display: block; }
+      a { color: var(--navy); }
+      a:focus-visible, button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+
+      .wrap {
+        width: min(1060px, 100% - 40px);
+        margin-inline: auto;
+      }
+
+      /* ---------- nav ---------- */
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 0 14px;
+        border-bottom: 1px solid var(--line);
+        flex-wrap: wrap;
+      }
+      .nav .brand {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-weight: 700;
+        font-size: 19px;
+        letter-spacing: 0.01em;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .nav .brand span { color: var(--accent); }
+      .nav ul {
+        display: flex;
+        gap: 4px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+      }
+      .nav ul a {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .nav ul a:hover { color: var(--ink); background: var(--chip-bg); }
+
+      /* ---------- hero ---------- */
+      .hero { padding: 56px 0 44px; }
+      .hero h1 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: clamp(30px, 5.2vw, 44px);
+        line-height: 1.12;
+        font-weight: 700;
+        margin: 0 0 18px;
+        max-width: 18ch;
+      }
+      .hero h1 em { font-style: normal; color: var(--accent-ink); }
+      .hero p.lede {
+        font-size: 19px;
+        color: var(--ink-soft);
+        max-width: 62ch;
+        margin: 0 0 28px;
+      }
+      .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15.5px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .btn-primary { background: var(--navy); color: #fff; }
+      @media (prefers-color-scheme: dark) {
+        .btn-primary { background: #2f5f96; }
+      }
+      .btn-primary:hover { background: var(--navy-deep); }
+      @media (prefers-color-scheme: dark) {
+        .btn-primary:hover { background: #3a6daa; }
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--line-strong);
+      }
+      .btn-ghost:hover { border-color: var(--ink-faint); }
+
+      .hero-meta {
+        display: flex;
+        gap: 10px 26px;
+        flex-wrap: wrap;
+        margin-top: 34px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--line-strong);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 13px;
+        color: var(--ink-faint);
+      }
+      .hero-meta b { color: var(--ink-soft); font-weight: 500; }
+
+      /* ---------- sections ---------- */
+      section { padding: 44px 0; }
+      section + section { border-top: 1px solid var(--line); }
+      .section-head { max-width: 640px; margin-bottom: 26px; }
+      .section-head h2 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: clamp(24px, 3.6vw, 31px);
+        line-height: 1.2;
+        margin: 0 0 10px;
+      }
+      .section-head p { color: var(--ink-soft); margin: 0; }
+
+      .company-mark {
+        display: grid;
+        grid-template-columns: minmax(280px, 1.1fr) 1fr;
+        gap: 28px;
+        align-items: center;
+        background: #14161d;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+      .company-mark img { width: 100%; height: auto; }
+      .company-copy { padding: 28px 32px 28px 0; color: #f4f1e8; }
+      .company-copy h2 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: clamp(24px, 3.6vw, 31px);
+        margin: 0 0 10px;
+      }
+      .company-copy p { color: #c9c7c0; margin: 0; }
+
+      /* how we work */
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .principle {
+        background: var(--paper-raised);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 22px 22px 18px;
+      }
+      .principle .num {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 13px;
+        color: var(--accent-ink);
+        font-weight: 500;
+      }
+      .principle h3 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 19px;
+        margin: 8px 0 8px;
+      }
+      .principle p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+
+      /* ---------- VectorForge feature ---------- */
+      .vf-plate {
+        background: var(--paper-raised);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .vf-top {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 0;
+      }
+      .vf-copy { padding: 34px 34px 30px; }
+      .vf-logo-plate {
+        background: #fdfcf9;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin-bottom: 20px;
+      }
+      .vf-copy h3 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 26px;
+        margin: 0 0 6px;
+      }
+      .vf-tagline {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 19px;
+        font-weight: 600;
+        color: var(--accent-ink);
+        margin: 0 0 14px;
+      }
+      .vf-copy p { color: var(--ink-soft); margin: 0 0 16px; font-size: 16px; }
+      .status-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 13px;
+        color: var(--ink-soft);
+        background: var(--chip-bg);
+        border-radius: 999px;
+        padding: 5px 13px 5px 10px;
+        margin-bottom: 18px;
+      }
+      .status-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: #2e9e5b;
+        flex: none;
+      }
+      .vf-shot {
+        border-left: 1px solid var(--line);
+        background: var(--chip-bg);
+        display: flex;
+        align-items: stretch;
+        padding: 0;
+        min-height: 280px;
+      }
+      .vf-shot button {
+        border: 0; padding: 0; background: none; cursor: zoom-in;
+        width: 100%;
+      }
+      .vf-shot img {
+        width: 100%; height: 100%; object-fit: cover; object-position: top left;
+      }
+      .vf-shot figcaption {
+        font-size: 12.5px;
+        color: var(--ink-faint);
+        padding: 8px 12px;
+        background: var(--paper-raised);
+        border-top: 1px solid var(--line);
+      }
+      figure { margin: 0; }
+
+      .vf-facts {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .vf-fact { padding: 16px 20px; }
+      .vf-fact + .vf-fact { border-left: 1px solid var(--line); }
+      .vf-fact dt {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 4px;
+      }
+      .vf-fact dd { margin: 0; font-weight: 600; font-size: 15px; }
+      dl { margin: 0; }
+
+      .vf-features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 34px;
+        padding: 24px 34px 6px;
+        border-top: 1px solid var(--line);
+      }
+      .vf-features li {
+        list-style: none;
+        position: relative;
+        padding: 7px 0 7px 26px;
+        color: var(--ink-soft);
+        font-size: 15.5px;
+      }
+      .vf-features li::before {
+        content: "";
+        position: absolute;
+        left: 2px; top: 15px;
+        width: 9px; height: 9px;
+        border: 2px solid var(--accent);
+        border-radius: 2px;
+        transform: rotate(45deg);
+      }
+      .vf-features li b { color: var(--ink); font-weight: 600; }
+      ul.vf-features { margin: 0; }
+
+      .vf-nodes {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 26px;
+        align-items: center;
+        padding: 26px 34px 30px;
+      }
+      .vf-nodes button {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 0; overflow: hidden; cursor: zoom-in; background: none;
+      }
+      .vf-nodes h4 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 20px;
+        margin: 0 0 8px;
+      }
+      .vf-nodes p { color: var(--ink-soft); margin: 0; font-size: 15.5px; }
+
+      .vf-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 0 34px 32px;
+      }
+      .vf-actions .note { font-size: 14px; color: var(--ink-faint); }
+
+      /* ---------- free files ---------- */
+      .free-files-empty {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 22px;
+        align-items: center;
+        border: 1px dashed var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--paper-raised);
+        padding: 24px;
+      }
+      .file-glyph {
+        width: 58px;
+        height: 70px;
+        border: 2px solid var(--accent);
+        border-radius: 5px;
+        position: relative;
+      }
+      .file-glyph::before,
+      .file-glyph::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid var(--accent);
+      }
+      .file-glyph::before { width: 22px; height: 22px; left: 8px; top: 12px; }
+      .file-glyph::after { width: 14px; height: 14px; right: 7px; bottom: 10px; }
+      .free-files-empty h3 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 20px;
+        margin: 0 0 5px;
+      }
+      .free-files-empty p { color: var(--ink-soft); margin: 0; font-size: 15.5px; }
+
+      /* ---------- roadmap ---------- */
+      .roadmap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .road-item {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 22px;
+        background: var(--paper-raised);
+      }
+      .road-item .tag {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--chip-bg);
+        color: var(--ink-soft);
+        display: inline-block;
+        margin-bottom: 12px;
+      }
+      .road-item .tag.now { background: var(--navy); color: #fff; }
+      @media (prefers-color-scheme: dark) {
+        .road-item .tag.now { background: #2f5f96; }
+      }
+      .road-item h3 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 20px;
+        margin: 0 0 8px;
+      }
+      .road-item p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+
+      /* ---------- contact ---------- */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .contact-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--paper-raised);
+        padding: 22px;
+      }
+      .contact-card h3 {
+        font-family: "Zilla Slab", Georgia, serif;
+        font-size: 18px;
+        margin: 0 0 6px;
+      }
+      .contact-card p { color: var(--ink-soft); font-size: 15px; margin: 0 0 14px; }
+      .contact-card .addr {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 13.5px;
+        word-break: break-all;
+        display: block;
+        margin-bottom: 14px;
+      }
+      .copy-btn {
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        padding: 7px 14px;
+        border-radius: 7px;
+        border: 1px solid var(--line-strong);
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+      }
+      .copy-btn:hover { border-color: var(--ink-faint); }
+      .copy-btn.copied { border-color: #2e9e5b; color: #2e9e5b; }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 26px 0 40px;
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        font-size: 14px;
+        color: var(--ink-faint);
+      }
+      footer a { color: var(--ink-soft); }
+
+      /* ---------- lightbox ---------- */
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 12, 22, 0.88);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        z-index: 50;
+      }
+      .lightbox.open { display: flex; }
+      .lightbox figure { max-width: min(1100px, 100%); }
+      .lightbox img {
+        border-radius: 8px;
+        max-height: calc(100vh - 120px);
+        width: auto;
+        margin-inline: auto;
+      }
+      .lightbox figcaption {
+        color: #cfd9e6;
+        text-align: center;
+        font-size: 14px;
+        margin-top: 12px;
+      }
+      .lightbox .close {
+        position: absolute;
+        top: 16px; right: 18px;
+        background: rgba(255,255,255,0.12);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 999px;
+        width: 40px; height: 40px;
+        font-size: 19px;
+        cursor: pointer;
+        line-height: 1;
+      }
+
+      @media (max-width: 480px) {
+        .nav { padding-top: 14px; }
+        .nav ul a { padding: 5px 8px; font-size: 14px; }
+        .hero-meta { gap: 8px 18px; }
+      }
+
+      /* ---------- responsive ---------- */
+      @media (max-width: 860px) {
+        .principles, .contact-grid { grid-template-columns: 1fr; }
+        .company-mark { grid-template-columns: 1fr; }
+        .company-copy { padding: 0 22px 24px; }
+        .free-files-empty { grid-template-columns: 1fr; }
+        .vf-top { grid-template-columns: 1fr; }
+        .vf-shot { border-left: 0; border-top: 1px solid var(--line); min-height: 0; }
+        .vf-shot img { object-fit: contain; }
+        .vf-facts { grid-template-columns: 1fr 1fr; }
+        .vf-fact:nth-child(3) { border-left: 0; }
+        .vf-fact { border-top: 1px solid var(--line); }
+        .vf-fact:nth-child(-n+2) { border-top: 0; }
+        .vf-features { grid-template-columns: 1fr; padding-inline: 22px; }
+        .vf-nodes { grid-template-columns: 1fr; padding-inline: 22px; }
+        .vf-copy { padding: 26px 22px 24px; }
+        .vf-actions { padding-inline: 22px; }
+        .roadmap { grid-template-columns: 1fr; }
+        .hero { padding-top: 40px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="nav" aria-label="Site">
+        <a class="brand" href="#top">Home<span>.</span></a>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#vectorforge">VectorForge</a></li>
+          <li><a href="#free-files">Free files</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <header class="hero" id="top">
+        <h1>Software built around <em>real workflows.</em></h1>
+        <p class="lede">
+          OlsTech Solutions is an independent software company developing
+          <a href="#vectorforge"><b>VectorForge</b></a>, an image-to-cut-path application
+          for laser cutters, CNC routers, and cutting machines.
+          VectorForge is now in public beta.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#vectorforge">Explore VectorForge</a>
+          <a class="btn btn-ghost" href="#free-files">Browse free files</a>
+        </div>
+        <div class="hero-meta" aria-label="Current facts">
+          <span><b>Current project</b> VectorForge (beta)</span>
+          <span><b>Beta access</b> Free while testing</span>
+        </div>
+      </header>
+
+      <section id="about">
+        <div class="company-mark">
+          <img src="assets/olstech-logo-dark.svg" alt="OlsTech Solutions logo with a gold Fibonacci spiral and construction squares" width="1280" height="480" />
+          <div class="company-copy">
+            <h2>OlsTech Solutions</h2>
+            <p>
+              VectorForge is our current project. The beta is focused on tracing images,
+              editing individual nodes, arranging designs on material, and exporting
+              exact-size SVG and DXF cut paths.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="vectorforge">
+        <div class="section-head">
+          <h2>Current project</h2>
+          <p>VectorForge is in active beta right now, and free while we test.</p>
+        </div>
+
+        <div class="vf-plate">
+          <div class="vf-top">
+            <div class="vf-copy">
+              <div class="vf-logo-plate">
+                <img src="assets/vectorforge-logo.png" alt="VectorForge logo — an eagle head drawn as vector nodes" width="2172" height="724" />
+              </div>
+              <h3>VectorForge</h3>
+              <p class="vf-tagline">Pictures in. Cut paths out.</p>
+              <span class="status-line"><span class="status-dot" aria-hidden="true"></span>Now in beta · v0.9.0-beta.30 · Free while we test</span>
+              <p>
+                VectorForge turns pictures into clean, exact-size cut paths for laser cutters,
+                CNC routers, and vinyl and paper cutting machines. Drop in an image, arrange it
+                on a sheet of your material, fix the nodes right where they sit, and export a
+                file your machine can cut.
+              </p>
+              <p>
+                It's a single 66&nbsp;MB Windows app — no install, just run it. The beta is free;
+                email or message us and the download link comes back to you.
+              </p>
+            </div>
+            <figure class="vf-shot">
+              <button type="button" data-lightbox="assets/vectorforge-app.jpg" data-caption="The VectorForge beta: three designs traced, arranged on one sheet, ready to export.">
+                <img src="assets/vectorforge-app.jpg" alt="VectorForge app window showing traced designs arranged on a material sheet" width="1680" height="1019" loading="lazy" />
+              </button>
+              <figcaption>The real beta — tap to look closer.</figcaption>
+            </figure>
+          </div>
+
+          <dl class="vf-facts">
+            <div class="vf-fact"><dt>Platform</dt><dd>Windows 10 / 11</dd></div>
+            <div class="vf-fact"><dt>Download</dt><dd>One 66 MB .exe</dd></div>
+            <div class="vf-fact"><dt>Install</dt><dd>None — just run it</dd></div>
+            <div class="vf-fact"><dt>Files out</dt><dd>DXF · SVG, exact size</dd></div>
+          </dl>
+
+          <ul class="vf-features">
+            <li><b>Traces as it lands.</b> Drop in PNG, JPEG, WebP, HEIC, even camera RAW — it traces the moment the image arrives, with presets for line art, photos, and text.</li>
+            <li><b>Edit nodes in place.</b> Open the nodes of every layer at once, right where they sit on the sheet — the fix other tracers make you export to do.</li>
+            <li><b>Your sheet is the material.</b> Lay everything out on stock-sized sheets, with shapes and text alongside your artwork.</li>
+            <li><b>Exact at export.</b> DXF (R12, one layer per colour) or SVG at real physical size in mm, cm, or inches — kerf compensation and holes-first cut order built in.</li>
+          </ul>
+
+          <div class="vf-nodes">
+            <button type="button" data-lightbox="assets/vectorforge-nodes.jpg" data-caption="Edit Nodes in VectorForge: every layer's nodes, editable in place on the sheet." aria-label="Enlarge the node-editing screenshot">
+              <img src="assets/vectorforge-nodes.jpg" alt="VectorForge node editing view with draggable points and handles on a traced design" width="1080" height="1080" loading="lazy" />
+            </button>
+            <div>
+              <h4>The part we obsessed over</h4>
+              <p>
+                Tracing is the easy half. The hard half is the cleanup — the stray point, the
+                wobbly curve, the join that doesn't meet. VectorForge lets you grab nodes and
+                handles on the sheet itself, across every layer at once, so the design you
+                fix is the design you cut.
+              </p>
+            </div>
+          </div>
+
+          <div class="vf-actions">
+            <a class="btn btn-primary" href="mailto:michael@olstechsolutions.com?subject=VectorForge%20beta%20access">Email for beta access</a>
+            <a class="btn btn-ghost" href="https://www.facebook.com/profile.php?id=61595190622949" target="_blank" rel="noopener">Follow on Facebook</a>
+            <span class="note">Free while in beta — no pricing promises until it's final.</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="free-files">
+        <div class="section-head">
+          <h2>Free files</h2>
+          <p>Downloadable SVG cut files will live here for laser and CNC projects.</p>
+        </div>
+        <div class="free-files-empty">
+          <div class="file-glyph" aria-hidden="true"></div>
+          <div>
+            <h3>Files are being prepared</h3>
+            <p>
+              The first free SVGs are still being made. Downloads will appear here as each
+              file is finished and ready to cut.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="section-head">
+          <h2>Contact</h2>
+          <p>Choose the address that best matches your message.</p>
+        </div>
+        <div class="contact-grid">
+          <article class="contact-card">
+            <h3>General &amp; beta access</h3>
+            <p>Questions, feedback, or a VectorForge beta download link.</p>
+            <span class="addr">michael@olstechsolutions.com</span>
+            <a class="btn btn-ghost" href="mailto:michael@olstechsolutions.com">Write email</a>
+            <button class="copy-btn" type="button" data-copy="michael@olstechsolutions.com">Copy address</button>
+          </article>
+          <article class="contact-card">
+            <h3>Support</h3>
+            <p>Something broken, confusing, or missing from the beta? Start here.</p>
+            <span class="addr">support@olstechsolutions.com</span>
+            <a class="btn btn-ghost" href="mailto:support@olstechsolutions.com">Write email</a>
+            <button class="copy-btn" type="button" data-copy="support@olstechsolutions.com">Copy address</button>
+          </article>
+          <article class="contact-card">
+            <h3>Sales</h3>
+            <p>Licensing and purchasing questions, once final pricing lands.</p>
+            <span class="addr">sales@olstechsolutions.com</span>
+            <a class="btn btn-ghost" href="mailto:sales@olstechsolutions.com">Write email</a>
+            <button class="copy-btn" type="button" data-copy="sales@olstechsolutions.com">Copy address</button>
+          </article>
+        </div>
+      </section>
+
+      <footer>
+        <span>© 2026 OlsTech Solutions</span>
+        <span><a href="https://www.facebook.com/profile.php?id=61595190622949" target="_blank" rel="noopener">VectorForge on Facebook</a></span>
+      </footer>
+    </div>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged screenshot">
+      <button class="close" type="button" id="lightbox-close" aria-label="Close">×</button>
+      <figure>
+        <img id="lightbox-img" src="assets/vectorforge-app.jpg" alt="" />
+        <figcaption id="lightbox-caption"></figcaption>
+      </figure>
+    </div>
+
+    <script>
+      (function () {
+        // Screenshot lightbox
+        var lightbox = document.getElementById('lightbox');
+        var lbImg = document.getElementById('lightbox-img');
+        var lbCap = document.getElementById('lightbox-caption');
+        var lbClose = document.getElementById('lightbox-close');
+        var lastFocus = null;
+
+        function openLightbox(src, caption, alt) {
+          lastFocus = document.activeElement;
+          lbImg.src = src;
+          lbImg.alt = alt || '';
+          lbCap.textContent = caption || '';
+          lightbox.classList.add('open');
+          lbClose.focus();
+        }
+        function closeLightbox() {
+          lightbox.classList.remove('open');
+          lbImg.src = 'assets/vectorforge-app.jpg';
+          if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+
+        var triggers = document.querySelectorAll('[data-lightbox]');
+        for (var i = 0; i < triggers.length; i++) {
+          (function (btn) {
+            btn.addEventListener('click', function () {
+              var img = btn.querySelector('img');
+              openLightbox(
+                btn.getAttribute('data-lightbox'),
+                btn.getAttribute('data-caption'),
+                img ? img.alt : ''
+              );
+            });
+          })(triggers[i]);
+        }
+        lbClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function (e) {
+          if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+        });
+
+        // Copy-email buttons
+        var copyBtns = document.querySelectorAll('[data-copy]');
+        for (var j = 0; j < copyBtns.length; j++) {
+          (function (btn) {
+            btn.addEventListener('click', function () {
+              var addr = btn.getAttribute('data-copy');
+              function done() {
+                var original = btn.textContent;
+                btn.textContent = 'Copied ✓';
+                btn.classList.add('copied');
+                setTimeout(function () {
+                  btn.textContent = original;
+                  btn.classList.remove('copied');
+                }, 2000);
+              }
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(addr).then(done, function () {
+                  fallbackCopy(addr);
+                  done();
+                });
+              } else {
+                fallbackCopy(addr);
+                done();
+              }
+            });
+          })(copyBtns[j]);
+        }
+        function fallbackCopy(text) {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch (e) { /* no-op */ }
+          document.body.removeChild(ta);
+        }
+      })();
+    </script>
+  </body>
+</html>
